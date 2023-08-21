@@ -52,7 +52,7 @@ namespace Discord_Bot_SmurW.Commands
         }
         #endregion
 
-        #region Получить роли
+        #region Получить роли #устаревшее
         [Hidden]
         [RequireOwner]
         [Command("роли")]
