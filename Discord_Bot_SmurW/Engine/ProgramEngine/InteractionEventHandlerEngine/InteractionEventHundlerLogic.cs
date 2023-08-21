@@ -493,7 +493,6 @@ namespace Discord_Bot_SmurW.Engine.ProgramEngine.InteractionEventHandlerEngine
                                                           $"{guild.GetChannel(1094951185137541190).Mention} - форум по игре Dead By Daylight\n" +
                                                           $"\r\n```                 Общение```\r\n" +
                                                           $"{guild.GetChannel(824195873620623424).Mention} - общий чат\n" +
-                                                          $"{guild.GetChannel(1109486038172315738).Mention} - раздел по увлечениям\n" +
                                                           $"{guild.GetChannel(1094954830222606347).Mention} - чат по игре Dead By Daylight\n" +
                                                           $"\r\n```                 Музыка```\r\n" +
                                                           $"{guild.GetChannel(1096013169887023165).Mention} - команды для управления музыкой\n" +
