@@ -22,7 +22,7 @@ namespace Discord_Bot_SmurW.Commands
         #region Топ 3 участника
         [RequireOwner]
         [Command("Топ")]
-        [Description("Отображает топ 3 участнка данного сервера")]
+        [Description("Отображает топ 3 участника данного сервера")]
         public async Task TopThreeAsync(CommandContext ctx)
         {
             var member = (DiscordMember)ctx.User;
