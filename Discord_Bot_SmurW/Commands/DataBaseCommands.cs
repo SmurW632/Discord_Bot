@@ -20,27 +20,28 @@ namespace Discord_Bot_SmurW.Commands
         [RequireOwner]
         [Command("db")]
         [Description("deleted or created db")]
-        public async Task DBDeleteOrCreate(CommandContext ctx, ulong bit = 2)
+        public async Task DBDeleteOrCreate(CommandContext ctx, string db = null)
         {
             var member = (DiscordMember)ctx.User;
             var guild = ctx.Guild;
 
             var ratingUsersEngine = new RaitingUsersEngine(member, guild);
-            var isDb = ratingUsersEngine.CreateOrDeleteDataBase((byte)bit);
+            var dataBaseEngine = new DataBaseEngine();
+            var isDb = dataBaseEngine.CreateOrDeleteDataBase(db);
             var embedMessage = new DiscordEmbedBuilder();
             embedMessage.Color = DiscordColor.Green;
 
-            if (bit == 0 && isDb == true)
+            if (db == "delet" && isDb == true)
             {
                 embedMessage.Title = "Вы успешно удалили базу данных";
             }
-            else if (bit == 1 && isDb == true)
+            else if (db == "create" && isDb == true)
             {
                 embedMessage.Title = "Вы успешно создали базу данных";
             }
             else
             {
-                embedMessage.Title = "Операции с базой данных провалиилсь";
+                embedMessage.Title = "Неудалось удалить или создать базу данных";
                 embedMessage.Color = DiscordColor.Red;
             }
 

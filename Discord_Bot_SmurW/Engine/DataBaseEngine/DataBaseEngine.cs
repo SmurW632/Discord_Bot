@@ -45,5 +45,21 @@ namespace Discord_Bot_SmurW.Engine.DataBaseEngine
 
             return true;
         }
+
+        // Удаление и Создание базы данных
+        public bool CreateOrDeleteDataBase(string db)
+        {
+            switch (db)
+            {
+                case "creat":
+                    _db.Database.EnsureCreated();
+                    break;
+
+                case "delet":
+                    _db.Database.EnsureDeleted();
+                    break;
+            }
+            return true;
+        }
     }
 }
