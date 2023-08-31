@@ -337,7 +337,7 @@ namespace Discord_Bot_SmurW.Commands
         }
         #endregion
 
-        #region Рейтинг 2.0
+        #region Рейтинг
         [RequireOwner]
         [Command("Рейтинг")]
         [Description("Отображает текущий рейтинг участника")]
@@ -357,7 +357,6 @@ namespace Discord_Bot_SmurW.Commands
             var viewRaiting = new DiscordMessageBuilder()
                        .AddEmbed(new DiscordEmbedBuilder()
                        .WithColor(DiscordColor.Wheat)
-                       .WithImageUrl(firstMember.AvatarUrl)
                        .WithTitle($"Профиль {currentUser.UserName}")
                        .WithThumbnail(currentUser.AvatarUrl)
                        .AddField("Дней на сервере", $"📅 {currentUser.DaysOnTheGuild} д.", true)

@@ -68,23 +68,14 @@ namespace Discord_Bot_SmurW.Engine.LevelSystem
             catch (Exception) { return null!; }
         }
 
-        public List<UserModel> GetAllUsersFromDb()
-        {
-            var guild = _db.Guilds.Include(g => g.Users).FirstOrDefault(g => g.GuildId == _guild.Id);
-            if (guild == null) return null!;
-
-            var users = guild.Users;
-            if(users == null) return null!;
-
-            return users;
-        }
-
-        public bool AddingExpPerPost()
+        /// <summary>
+        /// Добавление опыта за сообщения
+        /// </summary>
+        public bool AddingExpPerPost(UserModel user)
         {
             bool levelUp = false;
             try
             {
-                var user = GetUserFromDb();
                 if (user is null) return false;
 
                 var userTimeLimit = DateTime.Parse(user.TimeLimit!);
@@ -95,10 +86,10 @@ namespace Discord_Bot_SmurW.Engine.LevelSystem
                 double currentValueXp = 0.0;
                 int limitXpForLevelUP = 500;
                 int maxLevel = 100;
-
+                var timeLimit = DateTime.Now + TimeSpan.FromSeconds(30);
                 user.CountMessage++;
                 user.XP += rndCountXP;
-                user.TimeLimit = DateTime.Now.ToShortTimeString() + TimeSpan.FromSeconds(30).ToString();
+                user.TimeLimit = timeLimit.ToShortTimeString();
                 currentValueXp = user.XP / user.Level;
 
                 if (currentValueXp >= limitXpForLevelUP && user.Level < maxLevel)
@@ -112,6 +103,9 @@ namespace Discord_Bot_SmurW.Engine.LevelSystem
             return levelUp;
         }
 
+        /// <summary>
+        /// Количество дней проведенных на сервере
+        /// </summary>
         public void GettingDaysOnTheGuild()
         {
             var user = GetUserFromDb();
@@ -123,6 +117,9 @@ namespace Discord_Bot_SmurW.Engine.LevelSystem
             _db.SaveChanges();
         }
 
+        /// <summary>
+        /// Сохранение времени подключения к голосовому каналу
+        /// </summary>
         public void MemberConnectedVoiceChannel()
         {
             var user = GetUserFromDb();
@@ -133,6 +130,9 @@ namespace Discord_Bot_SmurW.Engine.LevelSystem
             _db.SaveChanges();
         }
 
+        /// <summary>
+        /// Расчет опыта за voice
+        /// </summary>
         private void EngineExpPerVoice(UserModel user, TimeSpan duration)
         {
             user.TotalMinutesForSession += (int)duration.TotalMinutes; 
@@ -147,15 +147,18 @@ namespace Discord_Bot_SmurW.Engine.LevelSystem
             }
         }
 
+        /// <summary>
+        /// Добавление опыта за voice
+        /// </summary>
         public void AddingExpPerVoice(bool isViewRaiting, DateTime timeRunBot = default)
         {
             var user = GetUserFromDb();
             if (user is null) return;
 
             var member = (DiscordMember?)_dMember;
-            var conUserToChannelString = DateTime.Parse(user.ConnectUserToChannel);
+            var conUserToChannelString = DateTime.Parse(user.ConnectUserToChannel!);
 
-            if (member.VoiceState == null && isViewRaiting == true) return;
+            if (member!.VoiceState == null && isViewRaiting == true) return;
 
             if (isViewRaiting == true)// Участник вызвал команду !рейтинг
             {
@@ -188,7 +191,10 @@ namespace Discord_Bot_SmurW.Engine.LevelSystem
             _db.SaveChanges();
         }
 
-        public bool SetXPUser(string plusOrMin, ulong xp, DiscordMember? member = null!)
+        /// <summary>
+        /// Установить опыт участнику
+        /// </summary>
+        public bool SetXPUser(string plusOrMin, ulong xp, DiscordMember member = null!)
         {
             try
             {
@@ -196,10 +202,8 @@ namespace Discord_Bot_SmurW.Engine.LevelSystem
                 var minus = plusOrMin.Contains('-');
                 if (plus is false && minus is false) return false;
 
-                var user = GetUserFromDb();
+                var user = GetUserFromDb(member);
                 if (user is null) return false;
-
-                if (member is not null) user = GetUserFromDb(member);
 
                 if (plus is true) user.XP += xp;
                 if (minus is true) user.XP -= xp;
@@ -210,11 +214,14 @@ namespace Discord_Bot_SmurW.Engine.LevelSystem
             catch (Exception) { return false; }
         }
 
+        /// <summary>
+        /// Установить уровень участнику
+        /// </summary>
         public bool SetLevel(ulong level, DiscordMember member = null!)
         {
             try
             {
-                if (level > 18) return false;
+                if (level > 100) return false;
 
                 if (member == null)
                 {
@@ -243,6 +250,9 @@ namespace Discord_Bot_SmurW.Engine.LevelSystem
             }
         }
 
+        /// <summary>
+        /// Сохранение пользователя в бд
+        /// </summary>
         public bool SavingUserToDb(DiscordMember user)
         {
             var newUser = new UserModel()
@@ -269,6 +279,9 @@ namespace Discord_Bot_SmurW.Engine.LevelSystem
             return true;
         }
 
+        /// <summary>
+        /// Сохранение список пользователей в бд
+        /// </summary>
         public bool SavingUsersToDb(List<DiscordMember> dcMembers)
         {
             if (dcMembers == null) return false;

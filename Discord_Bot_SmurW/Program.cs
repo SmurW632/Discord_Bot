@@ -344,8 +344,8 @@ public sealed class Program
 
     private static async Task MessageSendHandler(DiscordClient sender, MessageCreateEventArgs e)
     {
-        if (e.Message.Channel is DiscordDmChannel || e.Message.Content.StartsWith("!")) return;
         if(e.Author.IsBot) return;
+        if (e.Message.Channel is DiscordDmChannel || e.Message.Content.StartsWith("!")) return;
 
         var member = (DiscordMember)e.Author;
         var guild = e.Guild;
@@ -356,7 +356,7 @@ public sealed class Program
         if (isExistUser == false) return;
         var gettingUser = engine.GetUserFromDb();
 
-        var levelUp = engine.AddingExpPerPost();
+        var levelUp = engine.AddingExpPerPost(gettingUser);
 
         if (levelUp == true)
         {
