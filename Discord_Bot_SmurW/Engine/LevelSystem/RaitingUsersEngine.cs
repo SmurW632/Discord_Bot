@@ -16,6 +16,7 @@ namespace Discord_Bot_SmurW.Engine.LevelSystem
             _dMember = dMember;
         }
 
+        // Получить список топ 3 участников сервера
         public List<UserModel> GetTopUsersRaiting()
         {
             var guild = _db.Guilds.Include(g => g.Users).FirstOrDefault(g => g.GuildId == _guild.Id);
@@ -27,22 +28,7 @@ namespace Discord_Bot_SmurW.Engine.LevelSystem
             return users.OrderByDescending(u => u.XP).Take(3).ToList();
         }
 
-        //перекинуть в DataBaseEngine
-        public bool CreateOrDeleteDataBase(byte b)
-        {
-            switch (b)
-            {
-                case 1:  _db.Database.EnsureCreated();
-                    break;
-
-                case 0: _db.Database.EnsureDeleted();
-                    break;
-
-                default: return false;
-            }
-            return true;
-        }
-
+        // Существует ли пользователь в бд
         public bool CheckUserExistsToDb()
         {
             try
@@ -58,29 +44,23 @@ namespace Discord_Bot_SmurW.Engine.LevelSystem
             return true;
         }
 
-        public UserModel GetUserFromDb()
+        /// <summary>
+        /// Получить пользователя с бд
+        /// </summary>
+        public UserModel GetUserFromDb(DiscordMember member = null!)
         {
             try
             {
                 var guild = _db.Guilds!.Include(g => g.Users).FirstOrDefault(g => g.GuildId == _guild.Id);
                 if (guild is null) return null!;
 
-                var user = guild.Users?.FirstOrDefault(u => u.UserId == _dMember!.Id);
-                if (user is null) return null!;
+                var user = guild?.Users?.FirstOrDefault(u => u.UserId == _dMember!.Id);
 
-                return user;
-            }
-            catch (Exception) { return null!; }
-        }
-
-        public UserModel GetUserFromDb(DiscordMember member)
-        {
-            try
-            {
-                var guild = _db.Guilds!.Include(g => g.Users).FirstOrDefault(g => g.GuildId == _guild.Id);
-                if (guild is null) return null!;
-
-                var user = guild?.Users?.FirstOrDefault(u => u.UserId == member!.Id);
+                if (member != null)
+                {
+                    user = guild?.Users?.FirstOrDefault(u => u.UserId == member!.Id);
+                }
+                
                 if (user is null) return null!;
 
                 return user;
