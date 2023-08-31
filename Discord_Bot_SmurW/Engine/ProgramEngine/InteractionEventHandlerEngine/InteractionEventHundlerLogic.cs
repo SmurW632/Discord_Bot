@@ -737,7 +737,7 @@ namespace Discord_Bot_SmurW.Engine.ProgramEngine.InteractionEventHandlerEngine
             }
         }
 
-        [Obsolete]
+        //[Obsolete]
         public async Task DropDownUserEventHandler()
         {
             var member = (DiscordMember)_e!.User;
