@@ -3,6 +3,7 @@ using DSharpPlus.Entities;
 using Microsoft.EntityFrameworkCore;
 using Discord_Bot_SmurW.Engine.Models;
 using System.Diagnostics.Metrics;
+using System.ComponentModel;
 
 namespace Discord_Bot_SmurW.Engine.LevelSystem
 {
@@ -97,10 +98,95 @@ namespace Discord_Bot_SmurW.Engine.LevelSystem
                     user.Level++;
                     levelUp = true;
                 }
+
+                LevelReward(user);
                 _db.SaveChanges();
             }
             catch (Exception) { }
             return levelUp;
+        }
+
+        /// <summary>
+        /// Награда за уровни
+        /// </summary>
+        private async Task LevelReward(UserModel user)
+        {
+            var dUser = _guild.GetMemberAsync(user.UserId).Result;
+
+            var rolesIDs = new ulong[]
+            {
+                1113659395625201705, 1111191608453500950, 1111191906723057675, 1111192036205412432,
+                111192136868700201, 1111193133653446696, 1111193054456586302, 1111192918888292432,
+                1111192630420832347, 1111192565824372817, 1111192424258211941, 1111192265759674441
+            };
+
+            var existingRoles = rolesIDs
+                .Select(roleId => _guild.GetRole(roleId))
+                .Where(role => role != null)
+                .ToList();
+
+            switch (user.Level)
+            {
+                case 1:
+                    await GrantRole(dUser, existingRoles[0]);   
+                    break;
+                case 5:
+                    await RevokeRole(dUser, existingRoles[0]);
+                    await GrantRole(dUser, existingRoles[1]);
+                    break;
+                case 10:
+                    await RevokeRole(dUser, existingRoles[1]);
+                    await GrantRole(dUser, existingRoles[2]);
+                    break;
+                case 20:
+                    await RevokeRole(dUser, existingRoles[2]);
+                    await GrantRole(dUser, existingRoles[3]);
+                    break;
+                case 30:
+                    await RevokeRole(dUser, existingRoles[3]);
+                    await GrantRole(dUser, existingRoles[4]);
+                    break;
+                case 40:
+                    await RevokeRole(dUser, existingRoles[4]);
+                    await GrantRole(dUser, existingRoles[5]);
+                    break;
+                case 50:
+                    await RevokeRole(dUser, existingRoles[5]);
+                    await GrantRole(dUser, existingRoles[6]);
+                    break;
+                case 60:
+                    await RevokeRole(dUser, existingRoles[6]);
+                    await GrantRole(dUser, existingRoles[7]);
+                    break;
+                case 70:
+                    await RevokeRole(dUser, existingRoles[7]);
+                    await GrantRole(dUser, existingRoles[8]);
+                    break;
+                case 80:
+                    await RevokeRole(dUser, existingRoles[8]);
+                    await GrantRole(dUser, existingRoles[9]);
+                    break;
+                case 90:
+                    await RevokeRole(dUser, existingRoles[9]);
+                    await GrantRole(dUser, existingRoles[10]);
+                    break;
+                case 100:
+                    await RevokeRole(dUser, existingRoles[10]);
+                    await GrantRole(dUser, existingRoles[11]);
+                    break;
+            }
+        }
+
+        private async Task GrantRole(DiscordMember member, DiscordRole role)
+        {
+            if (!member.Roles.Contains(role))
+                await member.GrantRoleAsync(role);
+        }
+
+        private async Task RevokeRole(DiscordMember member, DiscordRole role)
+        {
+            if (member.Roles.Contains(role))
+                await member.RevokeRoleAsync(role);
         }
 
         /// <summary>
